@@ -92,8 +92,12 @@ export default function Page() {
       });
       if (res.status === 401) throw new Error("AUTH");
       const j = await res.json().catch(() => ({}));
+      if (j.code === "missing_anthropic_api_key") throw new Error("MISSING_ANTHROPIC_API_KEY");
+      if (j.code === "missing_app_password") throw new Error("MISSING_APP_PASSWORD");
       if (res.ok) return j.rows || [];
-      if (attempt === 1) throw new Error(j.error || `HTTP ${res.status}`);
+      if ((res.status < 500 && res.status !== 429) || attempt === 1) {
+        throw new Error(j.error || `HTTP ${res.status}`);
+      }
     }
     return [];
   }
@@ -119,7 +123,7 @@ export default function Page() {
             const r = await readTile(tileSets[job.k % tileSets.length][job.t], job.k === 2 ? 0.6 : 0);
             return r;
           } catch (e) {
-            if (e.message === "AUTH") throw e;
+            if (["AUTH", "MISSING_ANTHROPIC_API_KEY", "MISSING_APP_PASSWORD"].includes(e.message)) throw e;
             failed++; return [];
           } finally {
             done++; setProg({ done, total: jobs.length, text: `خواندن عکس ${fi + 1} از ${files.length}…` });
@@ -151,7 +155,12 @@ export default function Page() {
       if (failed) setError(`${failed} بخش از عکس‌ها خوانده نشد (خطای شبکه یا مدل). می‌توانید دوباره اجرا کنید.`);
       if (!all.length && !failed) setError("هیچ ردیفی پیدا نشد. عکس را صاف‌تر/واضح‌تر بگیرید یا چرخش را عوض کنید.");
     } catch (e) {
-      setError(e.message === "AUTH" ? "رمز اشتباه است." : "خطا: " + e.message);
+      if (e.message === "AUTH") setError("رمز برنامه اشتباه است.");
+      else if (e.message === "MISSING_ANTHROPIC_API_KEY") {
+        setError("کلید API آنتروپیک روی سرور تنظیم نشده است. در Vercel، در Settings → Environment Variables مقدار واقعی ANTHROPIC_API_KEY را اضافه کنید و دوباره Deploy کنید.");
+      } else if (e.message === "MISSING_APP_PASSWORD") {
+        setError("رمز برنامه روی سرور تنظیم نشده است. در Vercel، مقدار APP_PASSWORD را در Settings → Environment Variables تنظیم کنید و دوباره Deploy کنید.");
+      } else setError("خطا: " + e.message);
     } finally {
       setBusy(false);
       setProg({ done: 0, total: 0, text: "" });

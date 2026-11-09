@@ -6,7 +6,10 @@ export const maxDuration = 60;
 
 function authError(req) {
   const pw = process.env.APP_PASSWORD;
-  if (!pw) return Response.json({ error: "APP_PASSWORD is not set on the server" }, { status: 500 });
+  if (!pw) return Response.json(
+    { code: "missing_app_password", error: "APP_PASSWORD is not set on the server" },
+    { status: 503 },
+  );
   if (req.headers.get("x-app-password") !== pw) return Response.json({ error: "unauthorized" }, { status: 401 });
   return null;
 }
@@ -27,7 +30,10 @@ function parseRows(text) {
 export async function POST(req) {
   const bad = authError(req);
   if (bad) return bad;
-  if (!process.env.ANTHROPIC_API_KEY) return Response.json({ error: "ANTHROPIC_API_KEY is not set on the server" }, { status: 500 });
+  if (!process.env.ANTHROPIC_API_KEY) return Response.json(
+    { code: "missing_anthropic_api_key", error: "ANTHROPIC_API_KEY is not set on the server" },
+    { status: 503 },
+  );
 
   const { image, temperature } = await req.json();
   if (!image) return Response.json({ error: "no image" }, { status: 400 });

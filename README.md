@@ -13,6 +13,10 @@
    - `ANTHROPIC_MODEL`    اختیاری، پیش‌فرض `claude-sonnet-5-5`
 3. Deploy. در صفحه، رمز را یک‌بار وارد کنید (در مرورگر ذخیره می‌شود).
 
+اگر هنگام تبدیل پیام نبودن `ANTHROPIC_API_KEY` دیدید، مقدار واقعی کلید Anthropic را در
+Vercel → Project → Settings → Environment Variables برای محیط Production اضافه کنید
+(نه مقدار نمونهٔ `sk-ant-...`) و سپس یک Deploy جدید انجام دهید.
+
 ## اجرای محلی
 ```
 npm install
