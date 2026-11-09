@@ -2,3 +2,6 @@ node_modules
 .next
 .env*.local
 .vercel
+public/ocr/worker.min.js
+public/ocr/tesseract-core-lstm.wasm
+public/ocr/tesseract-core-lstm.wasm.js

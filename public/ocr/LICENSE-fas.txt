@@ -1,0 +1,10 @@
+Persian OCR traineddata
+
+The Persian traineddata file is from tessdata_fast:
+https://github.com/tesseract-ocr/tessdata_fast/
+
+Copyright 1988-1995 Hewlett Packard Company.
+Copyright 2006-2022 Google Inc.
+
+Licensed under the Apache License, Version 2.0. You may obtain a copy of the
+License at https://www.apache.org/licenses/LICENSE-2.0.
